@@ -43,7 +43,7 @@ const Video = () => {
       {toggleShowPlayer.active && (
         <Player
           onClosePlayer={handleClosePlayer}
-          source="/assets/mot-trieu-like.mp4"
+          source="https://drive.google.com/u/0/uc?id=1TCe8ArwpNSQeO1OuFDEJXcGRGnxijcl6&export=download"
           textTracks={[
             {
               label: 'en-US',
