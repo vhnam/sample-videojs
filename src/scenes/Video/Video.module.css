@@ -1,0 +1,13 @@
+.playerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.playerContainer > button {
+  width: 5rem;
+  height: 5rem;
+  background-color: #757575;
+  opacity: 0.8;
+}

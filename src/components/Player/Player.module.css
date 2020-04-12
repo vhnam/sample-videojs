@@ -1,0 +1,60 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 11;
+  background-color: black;
+}
+
+:global(.vjs-custom.video-js) {
+  color: #f49832;
+}
+
+:global(.vjs-custom.video-js .vjs-control-bar) {
+  position: fixed;
+}
+
+:global(.vjs-dismiss-player-icon) {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  z-index: 1000;
+  opacity: 0.8;
+}
+
+:global(.vjs-dismiss-player-icon:hover) {
+  opacity: 1;
+}
+
+:global(.vjs-dismiss-player-icon.vjs-dismiss-player-icon--hidden) {
+  display: none;
+}
+
+:global(.vjs-dismiss-player-icon::after) {
+  content: '\2190';
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+:global(.video-js .vjs-text-track-display > div) {
+  bottom: 3rem !important;
+}
+
+:global(.video-js .vjs-text-track-display > div > div > div) {
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px #000000;
+  background-color: transparent !important;
+}
+
+:global(.video-js .vjs-subs-caps-button .vjs-icon-placeholder:before) {
+  content: '\f10c' !important;
+}
+
+:global(.video-js .vjs-menu li) {
+  text-transform: initial;
+}
