@@ -1,6 +1,8 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {Button, Layout} from 'antd';
 import {PlayCircleOutlined} from '@ant-design/icons';
+
+import ga, {gaCategories, gaEvents} from '../../helpers/ga';
 
 import useToggle from '../../hooks/useToggle';
 
@@ -12,6 +14,8 @@ import styles from './Video.module.css';
 const Video = () => {
   const toggleShowPlayer = useToggle();
 
+  const isResume = useRef(false);
+
   const {Content} = Layout;
 
   const handleOpenPlayer = useCallback(() => {
@@ -21,6 +25,67 @@ const Video = () => {
   const handleClosePlayer = useCallback(() => {
     toggleShowPlayer.setInActive();
   }, [toggleShowPlayer]);
+
+  const handleTrackingPlay = useCallback(() => {
+    ga.trackEvent(
+      gaCategories.MEDIA_PLAYBACK,
+      gaEvents.mediaPlayback.MEDIA_LAUNCH,
+      {
+        ContentID: 'oigiXW6XyCQ',
+        Title: 'Một Triệu Like',
+      },
+    );
+  }, []);
+
+  const handleTrackingPause = useCallback(() => {
+    ga.trackEvent(
+      gaCategories.MEDIA_PLAYBACK,
+      gaEvents.mediaPlayback.MEDIA_PAUSE,
+      {
+        ContentID: 'oigiXW6XyCQ',
+        Title: 'Một Triệu Like',
+      },
+    );
+  }, []);
+
+  const handleTrackingSeek = useCallback((elapsedTime) => {
+    if (isResume.current) {
+      isResume.current = false;
+    } else {
+      ga.trackEvent(
+        gaCategories.MEDIA_PLAYBACK,
+        gaEvents.mediaPlayback.MEDIA_SEEK,
+        {
+          ContentID: 'oigiXW6XyCQ',
+          Title: 'Một Triệu Like',
+          ElapsedTime: elapsedTime,
+        },
+      );
+    }
+  }, []);
+
+  const handleTrackingExit = useCallback((elapsedTime) => {
+    ga.trackEvent(
+      gaCategories.MEDIA_PLAYBACK,
+      gaEvents.mediaPlayback.MEDIA_EXIT,
+      {
+        ContentID: 'oigiXW6XyCQ',
+        Title: 'Một Triệu Like',
+        ElapsedTime: elapsedTime,
+      },
+    );
+  }, []);
+
+  const handleTrackingEnded = useCallback(() => {
+    ga.trackEvent(
+      gaCategories.MEDIA_PLAYBACK,
+      gaEvents.mediaPlayback.MEDIA_ENDED,
+      {
+        ContentID: 'oigiXW6XyCQ',
+        Title: 'Một Triệu Like',
+      },
+    );
+  }, []);
 
   return (
     <Content>
@@ -59,6 +124,11 @@ const Video = () => {
               default: true,
             },
           ]}
+          onTrackingPlay={handleTrackingPlay}
+          onTrackingPause={handleTrackingPause}
+          onTrackingSeek={handleTrackingSeek}
+          onTrackingExit={handleTrackingExit}
+          onTrackingEnded={handleTrackingEnded}
         />
       )}
     </Content>

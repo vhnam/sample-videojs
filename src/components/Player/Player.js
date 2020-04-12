@@ -5,14 +5,25 @@ import clsx from 'clsx';
 
 import styles from './Player.module.css';
 
-const Player = ({source, textTracks, onClosePlayer}) => {
+const Player = ({
+  source,
+  textTracks,
+  onClosePlayer,
+  onTrackingPlay,
+  onTrackingPause,
+  onTrackingSeek,
+  onTrackingExit,
+  onTrackingEnded,
+}) => {
   const player = useRef(null);
   const videoNode = useRef(null);
 
   const isPlaying = useRef();
   const isSeeking = useRef();
+  const previousTime = useRef(0);
+  const currentTime = useRef(0);
+  const seekStart = useRef(-1);
   const currentVolume = useRef();
-  const currentTime = useRef();
 
   const [isUserActive, setIsUserActive] = useState(true);
 
@@ -41,21 +52,46 @@ const Player = ({source, textTracks, onClosePlayer}) => {
     });
 
     player.current.on('play', () => {
+      if (!isSeeking.current) {
+        onTrackingPlay();
+      }
+
       isPlaying.current = true;
     });
 
     player.current.on('pause', () => {
+      const mediaDuration = player.current.duration();
+
+      if (!isSeeking.current && currentTime.current !== mediaDuration) {
+        onTrackingPause();
+      }
+
       isPlaying.current = false;
     });
 
+    player.current.on('timeupdate', () => {
+      previousTime.current = currentTime.current;
+      currentTime.current = player.current.currentTime();
+    });
+
     player.current.on('seeking', () => {
-      isSeeking.current = true;
+      if (seekStart.current === -1) {
+        isSeeking.current = true;
+        seekStart.current = previousTime.current;
+      }
     });
 
     player.current.on('seeked', () => {
+      onTrackingSeek(seekStart.current);
+
       isSeeking.current = false;
+      seekStart.current = -1;
     });
-  }, []);
+
+    player.current.on('ended', () => {
+      onTrackingEnded();
+    });
+  }, [onTrackingPlay, onTrackingPause, onTrackingSeek, onTrackingEnded]);
 
   const handleTogglePlay = useCallback(() => {
     if (isPlaying.current) {
@@ -119,9 +155,12 @@ const Player = ({source, textTracks, onClosePlayer}) => {
   }, []);
 
   const handleClosePlayer = useCallback(() => {
+    const currentTime = player.current.currentTime();
+
     player.current.dispose();
+    onTrackingExit(currentTime);
     onClosePlayer();
-  }, [onClosePlayer]);
+  }, [onClosePlayer, onTrackingExit]);
 
   const handleHotKeys = useCallback(
     (e) => {
